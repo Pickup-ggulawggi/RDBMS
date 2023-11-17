@@ -5,6 +5,7 @@ const app = express();
 const port = process.env.PORT || 5000; //노드서버가 사용할 포트넘버
 const db = require('./config/db');
 
+app.use(express.json());
 app.use(cors());
 
 app.get('/', (req, res) => {
