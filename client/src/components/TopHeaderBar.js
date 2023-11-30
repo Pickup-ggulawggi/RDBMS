@@ -18,8 +18,8 @@ function TopHeaderBar() {
 	return (
 		<div className={styles.main}>
 			<div className={styles.title}>FC DB</div>
-			<div onClick={navigateToSearch} className={styles.search}>Search Player</div>
-			<div onClick={navigateToCreate} className={styles.create}>Create Custom Player</div>
+			<div onClick={navigateToSearch} className={styles.search}>SEARCH PLAYER</div>
+			<div onClick={navigateToCreate} className={styles.create}>CREATE CUSTOM PLAYER</div>
 		</div>
 	)
 }

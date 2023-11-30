@@ -1,18 +1,40 @@
+import axios from 'axios';
+
 import styles from "./ResultContainer.module.css"
 
 function ResultContainer(props) {
 
+	//store result data 
 	const pData = props.playerData.data
 
+	//display confirm when click delete button
+	const handleDelelte = (e) => {
+		const pId = e.target.value;
+		if (window.confirm(`Are you sure delete Player ${e.target.name}?`)) deletePlayer(pId);
+	}
+	//delete selected player
+	const deletePlayer = async(props) => {
+		await axios.get("http://localhost:5000/delete",
+			{params: {
+				_pId: props
+			}}
+			).then((result) => {
+				alert("Player deleted") 
+			})
+		}
+	//display result
 	const fetchResult = () => {
 		const newArr = []
-		console.log(pData)
+		//on first render
 		if (!pData) {
 			return
-		} else if (!pData.length) {
+		} 
+		//if no player returned from server
+		else if (!pData.length) {
 			return alert("No player corresponding")
-		} else {
-			console.log(1)
+		} 
+		// player returned correctly
+		else {
 			for (let i = 0; i < pData.length; i++){
 				newArr.push(
 					<div className={styles.main}>
@@ -43,13 +65,17 @@ function ResultContainer(props) {
 						<div>
 							PHY: {pData[i].Physicality} &ensp;
 						</div>
+						<div>
+							<button>UPDATE</button>&ensp;
+							<button value={pData[i].playerId} name={pData[i].playerName}onClick={handleDelelte}>DELETE</button>
+						</div>
 					</div>)
 			}
 			return newArr;}
 	}
-
 	return (
-		<div>
+		<div className={styles.container}>
+			<div className={styles.title}>SEARCH RESULT</div>
 			{fetchResult()}
 		</div>
 	)
