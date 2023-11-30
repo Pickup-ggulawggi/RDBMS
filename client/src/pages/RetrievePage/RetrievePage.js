@@ -7,10 +7,8 @@ import styles from './RetrievePage.module.css'
 
 function RetrievePage() {
 
+	//selected data
 	const [data, setData] = useState(0);
-
-
-	console.log(data)
 
 	return (
 		<div className={styles.main}>

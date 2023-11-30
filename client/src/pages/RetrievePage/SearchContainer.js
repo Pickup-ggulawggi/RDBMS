@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect} from 'react'
 import axios from 'axios';
 import styles from './SearchContainer.module.css'
 
 function SearchContainer(props) {
 
+	//initial values when search
 	const initialValue = {
 		minAcceleration: 0,
 		maxAcceleration: 99,
@@ -88,8 +89,11 @@ function SearchContainer(props) {
 		playerName: "",
 		teamName: "",
 		countryName: "",
+		leagueId: -1,
 		leagueName: "",
 	}
+
+	//set value states
 	const [inputValues, setInputValues] = useState(initialValue);
 	const {
 		minAcceleration,
@@ -175,8 +179,21 @@ function SearchContainer(props) {
 		playerName,
 		teamName,
 		countryName,
+		leagueId,
 		leagueName,} = inputValues
+	
+	//get country, league from mysql on first render
+	useEffect(() => {
+		fetchCountry()
+		fetchLeague()
+	}, [])
 
+	//get team from mysql on first render and when league selected
+	useEffect(() => {
+		fetchTeam()
+	}, [leagueId])
+
+	//main stats to search
 	const mainStatText = [ "Overall", "Pace", "Shooting", "Passing", "Dribbling" , "Defending","Physicality"]
 	const mainStat = [
 		[minOverall, "minOverall"], [maxOverall, "maxOverall"],
@@ -187,20 +204,129 @@ function SearchContainer(props) {
 		[minDefending, "minDefending"], [maxDefending, "maxDefending"],
 		[minPhysicality, "minPhysicality"], [maxPhysicality, "maxPhysicality"]
 	];
+	
+	//connect to server to retrieve data
+	const fetchSubmit = async() => {
+		await axios.get("http://localhost:5000/player",
+		 {params: {
+			_name: playerName,
+			_teamId: teamId,
+			_countryId: countryId,
+			_leagueId: leagueId,
+			_position: position,
+			_minOverall: minOverall,
+			_maxOverall: maxOverall,
+			_minPace: minPace,
+			_maxPace: maxPace,
+			_minShooting: minShooting,
+			_maxShooting: maxShooting,
+			_minPassing: minPassing,
+			_maxPassing: maxPassing,
+			_minDribbling: minDribbling,
+			_maxDribbling: maxDribbling,
+			_minDefending: minDefending,
+			_maxDefending: maxDefending,
+			_minPhysicality: minPhysicality,
+			_maxPhysicality: maxPhysicality,
+		}
+		}).then((result) => {
+			console.log(result)
+			props.setData(result)
+		})
+	}
+	const [countrys, setCountrys] = useState([]);
+	//get country info from server to show combobox
+	const fetchCountry = async() => {
+		await axios.get("http://localhost:5000/country").then((result) => {
+			const arr = result.data
+			arr.unshift({countryId: -1, countryName:"ALL"})
+			setCountrys(arr)
+		})
+	}
+
+	const [leagues, setLeagues] = useState([]);
+	const fetchLeague = async() => {
+		await axios.get("http://localhost:5000/league").then((result) => {
+			const arr = result.data
+			arr.unshift({leagueId: -1, leagueName:"ALL", division: 0})
+			setLeagues(arr)
+		})
+	}
+
+	const [teams, setTeams] = useState([]);
+	const fetchTeam = async() => {
+		await axios.get("http://localhost:5000/team",
+			{params: {
+				_leagueId: leagueId,
+			}}
+		).then((result) => {
+			const arr = result.data
+			arr.unshift({teamId: -1, teamName:"ALL"})
+			setTeams(arr)
+		})
+	}
 
 	//handle form values
 	const handleChange = (e) => {
 		const {value, name: inputName} = e.target
-		console.log(`Selected ${inputName}: ${value}`);
     setInputValues({...inputValues, [inputName]: value})
 	}
 
-	//on submit button
+	//when click submit button
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		const {value, name: inputName} = e.target
     setInputValues({...inputValues, [inputName]: value})
 		fetchSubmit()
+	}
+
+	//country input container
+	const countryInput = () => {
+		return (
+			<select className={styles.input_position_box} name='countryId' onChange={handleChange}>
+				{countrys.map((option) => (
+					<option
+						key={option.countryId}
+						value={option.countryId}
+						name='Country'
+					>
+						{option.countryName}
+					</option>
+				))}
+		</select>
+		)
+	}
+
+	//league input container
+	const leagueInput = () => {
+		return (
+			<select className={styles.input_position_box} name='leagueId' onChange={handleChange}>
+				{leagues.map((option) => 
+					<option
+						key={option.leagueId}
+						value={option.leagueId}
+						name='league'>
+						{option.leagueName}
+					</option>
+				)}
+			</select>
+		)
+	}
+
+	//team input container
+	const teamInput = () => {
+		return (
+			<select className={styles.input_position_box} name='teamId' onChange={handleChange}>
+				{teams.map((option) => (
+					<option
+						key={option.teamId}
+						value={option.teamId}
+						name='team'>
+						{option.teamName}
+					</option>
+				))}
+			</select>
+		)
 	}
 
 	//mainstat input container
@@ -258,38 +384,10 @@ function SearchContainer(props) {
 		)
 	}
 
-	//connect to server
-	const fetchSubmit = async() => {
-		await axios.get("http://localhost:5000/player",
-		 {params: {
-			_name: playerName,
-			_position: position,
-			_minOverall: minOverall,
-			_maxOverall: maxOverall,
-			_minPace: minPace,
-			_maxPace: maxPace,
-			_minShooting: minShooting,
-			_maxShooting: maxShooting,
-			_minPassing: minPassing,
-			_maxPassing: maxPassing,
-			_minDribbling: minDribbling,
-			_maxDribbling: maxDribbling,
-			_minDefending: minDefending,
-			_maxDefending: maxDefending,
-			_minPhysicality: minPhysicality,
-			_maxPhysicality: maxPhysicality,
-		}
-		}).then((result) => {
-			console.log(playerName)
-			console.log(result.data)
-			props.setData(result)
-		})
-	}
-
 	return (
 		<form className={styles.main} onSubmit={handleSubmit}>
-			<div className={styles.text}>Search Players</div>
-			<div className={styles.text}>player name</div>
+			<div className={styles.title}>SEARCH PLAYER</div>
+			<div className={styles.text}>Player Name</div>
 			<input
 				className={styles.input_text_box}
 				type='text'
@@ -297,10 +395,17 @@ function SearchContainer(props) {
 				value={playerName||""}
 				onChange={handleChange}
 			/>
+			<div className={styles.text}>Country</div>
+			<div>{countryInput()}</div>
+			<div className={styles.text}>League</div>
+			<div>{leagueInput()}</div>
+			<div className={styles.text}>Team</div>
+			<div>{teamInput()}</div>
 			<div className={styles.text}>Position</div>
 			<div>{positionInput()}</div>
 			<div>{mainStatInput()}</div>
-			<button type="submit">submit</button>
+
+			<button type="submit" className={styles.submit_button}>submit</button>
 
 		</form>
 	)
