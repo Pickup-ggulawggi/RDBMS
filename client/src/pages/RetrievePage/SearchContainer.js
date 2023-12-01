@@ -187,7 +187,7 @@ function SearchContainer(props) {
 		fetchCountry()
 		fetchLeague()
 	}, [])
-
+	
 	//get team from mysql on first render and when league selected
 	useEffect(() => {
 		fetchTeam()
