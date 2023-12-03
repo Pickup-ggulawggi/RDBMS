@@ -1,0 +1,28 @@
+.main{
+	width: 300px;
+	height: 90vh;
+	border: 1px solid black;
+	display: flex;
+	flex-direction: column;
+	white-space: pre-wrap;
+	overflow-y: scroll;
+}
+.title{
+	font-size: larger;
+	margin: 5px;
+}
+.team{
+	display: flex;
+	border: 1px solid black;
+	margin: 15px;
+}
+.team:hover{
+	background-color: lightgreen;
+}
+.text{
+	margin: 10px;
+}
+.textbox{
+	width: 200px;
+	margin: 10px;
+}

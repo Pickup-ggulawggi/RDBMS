@@ -15,6 +15,7 @@
 	margin: 5px;
 	padding: 5px;
 	border: 1px solid black;
+	flex-wrap: wrap;
 }
 .main:hover{
 	background-color: lightgray;
@@ -26,4 +27,20 @@
 .name{
 	width: 200px;
 	margin: 0px, 5px;
+}
+.updateContainer{
+	width: 1000px;
+}
+.details{
+	display: flex;
+	flex-wrap: wrap;
+}
+.updateText {
+	margin: 5px;
+}
+.submit_button{
+	width: 50%;
+	display: flex;
+	justify-content: center;
+	margin: 15px 0px 15px 15px;
 }

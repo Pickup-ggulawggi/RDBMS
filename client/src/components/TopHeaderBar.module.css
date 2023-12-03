@@ -14,7 +14,7 @@
 	cursor: pointer;
 }
 .search:hover{
-	background-color: darkgray;
+	background-color: lightgreen;
 }
 .create{
 	margin: 0 5%;
@@ -22,5 +22,5 @@
 	cursor: pointer;
 }
 .create:hover{
-	background-color: darkgray;
+	background-color: lightgreen;
 }

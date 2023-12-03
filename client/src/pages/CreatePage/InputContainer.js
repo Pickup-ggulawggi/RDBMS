@@ -8,7 +8,7 @@ function InputContainer() {
 	//initial values when create
 	const initialValue = {
 		Acceleration: 99,
-		Age: 99,
+		Age: 20,
 		Aggression: 99,
 		Agility: 99,
 		Attworkrate: "High",
@@ -34,13 +34,13 @@ function InputContainer() {
 		Passing: 99,
 		Penalties: 99,
 		Physicality: 99,
-		position: "ST",
+		position: "GK",
 		Positioning: 99,
 		Preferredfoot: "Right",
 		Reactions: 99,
 		Shooting: 99,
 		Shot: 99,
-		Skillmoves: "5",
+		Skillmoves: 1,
 		Sliding: 99,
 		Sprint: 99,
 		Stamina: 99,
@@ -48,12 +48,12 @@ function InputContainer() {
 		Strength: 99,
 		Vision: 99,
 		Volleys: 99,
-		Weakfoot: "5",
-		countryId: -1,
+		Weakfoot: 1,
+		countryId: 0,
 		playerId: -1,
-		teamId: -1,
+		teamId: 0,
 		playerName: "",
-		leagueId: -1,
+		leagueId: -1
 	}
 	//set value states
 	const [inputValues, setInputValues] = useState(initialValue);
@@ -154,7 +154,7 @@ function InputContainer() {
 
 	//connect to server to retrieve data
 	const fetchSubmit = async() => {
-		await axios.get("http://localhost:5000/createplayer",
+		await axios.get("http://localhost:5000/create",
 		 {params: {
 			_Acceleration: Acceleration,
 			_Age: Age,
@@ -199,12 +199,12 @@ function InputContainer() {
 			_Volleys: Volleys,
 			_Weakfoot: Weakfoot,
 			_countryId: countryId,
-			_playerId: playerId,
 			_teamId: teamId,
 			_playerName: playerName,
 		}
 		}).then((result) => {
 			console.log(result)
+			alert("Player added")
 		})
 	}
 
@@ -227,6 +227,20 @@ function InputContainer() {
 
 	const [teams, setTeams] = useState([]);
 
+	//alert for input range 
+	const inputAlert = (e) => {
+		if (e.target.value >= 0) {
+			if (e.target.value.length > 2) {
+				if (e.target.value >= 100) {
+					alert("Maximum stat is 99");
+				}
+				e.target.value = 99;
+			}
+		} else {
+			e.target.value = 0;
+			alert("Minimum stat is 0");}
+	}
+
 	//handle form values
 	const handleChange = (e) => {
 		const {value, name: inputName} = e.target
@@ -236,9 +250,11 @@ function InputContainer() {
 	//when click submit button
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		const {value, name: inputName} = e.target
-		setInputValues({...inputValues, [inputName]: value})
-		fetchSubmit()
+		if (playerName === "") {
+			alert("Please input Player Name")
+			return
+		}
+		if (window.confirm(`Are you sure create Player ${playerName}?`)) fetchSubmit();
 	}
 
 	//country input container
@@ -343,6 +359,7 @@ function InputContainer() {
 									type='number'
 									name= {e[2]}
 									value= {e[1]}
+									onInput={inputAlert}
 									onChange={handleChange}/>
 								</div>)
 						})}
@@ -353,20 +370,204 @@ function InputContainer() {
 		)
 	}
 
+	const ageInput = () => {
+		return (
+			<input
+				className={styles.input_int_box}
+				type='number'
+				name= 'Age'
+				value={Age}
+				onInput={inputAlert}
+				onChange={handleChange}/>
+		)
+	}
+
+	const workrate = [
+		{value: "High"},
+		{value: "Medium"},
+		{value: "Low"},
+	]
+
+	const attworkrateInput = () => {
+		return (
+			<select className={styles.input_position_box} name='Attworkrate' onChange={handleChange}>
+				{workrate.map((option) => (
+					<option
+						key={option.value}
+						value={option.value}
+						name='Attworkrate'>
+						{option.value}
+					</option>	
+				))}
+			</select>
+			)
+	}
+
+	const defworkrateInput = () => {
+		return (
+			<select className={styles.input_position_box} name='Defworkrate' onChange={handleChange}>
+				{workrate.map((option) => (
+					<option
+						key={option.value}
+						value={option.value}
+						name='Defworkrate'>
+						{option.value}
+					</option>	
+				))}
+			</select>
+			)
+	}
+
+	const genderInput = () => {
+		const gender = [
+			{value: "M"},
+			{value: "F"},
+		]
+		return (
+			<select className={styles.input_position_box} name='Gender' onChange={handleChange}>
+				{gender.map((option) => (
+					<option
+						key={option.value}
+						value={option.value}
+						name='Gender'>
+						{option.value}
+					</option>	
+				))}
+			</select>
+			)
+	}
+
+	const skill = [
+		{value: 1},
+		{value: 2},
+		{value: 3},
+		{value: 4},
+		{value: 5},
+	]
+	const skillmovesInput = () => {
+		return (
+			<select className={styles.input_position_box} name='Skillmoves' onChange={handleChange}>
+				{skill.map((option) => (
+					<option
+						key={option.value}
+						value={option.value}
+						name='Skillmoves'>
+						{option.value}
+					</option>	
+				))}
+			</select>
+			)
+	}
+
+	const weakfootInput = () => {
+		return (
+			<select className={styles.input_position_box} name='Weakfoot' onChange={handleChange}>
+				{skill.map((option) => (
+					<option
+						key={option.value}
+						value={option.value}
+						name='Weakfoot'>
+						{option.value}
+					</option>	
+				))}
+			</select>
+			)
+	}
+
+	const preferredfootInput = () => {
+		const pref = [{value: "Right"}, {value: "Left"} ]
+		return (
+			<select className={styles.input_position_box} name='Preferredfoot' onChange={handleChange}>
+				{pref.map((option) => (
+					<option
+						key={option.value}
+						value={option.value}
+						name='Preferredfoot'>
+						{option.value}
+					</option>	
+				))}
+			</select>
+			)
+	}
+
+	const gkInput = () => {
+		return (
+			<input
+				className={styles.input_int_box}
+				type='number'
+				name= 'GK'
+				value={GK}
+				onInput={inputAlert}
+				onChange={handleChange}/>
+		)
+	}
+
+	const overallInput = () => {
+		return (
+			<input
+				className={styles.input_int_box}
+				type='number'
+				name= 'Overall'
+				value={Overall}
+				onInput={inputAlert}
+				onChange={handleChange}/>
+		)
+	}
+
+	const playerNameInput = () => {
+		return (
+			<div>
+				<div className={styles.text}>Player Name</div>
+					<input
+						className={styles.input_text_box}
+						type='text'
+						name='playerName'
+						value={playerName||""}
+						onChange={handleChange}
+					/>
+			</div>
+		)
+	}
+
 	return (
-		<div className={styles.main} onSubmit={handleSubmit}>
-			<div className={styles.title}>CREATE YOUR OWN PLAYER</div>
-			<div className={styles.text}>Country</div>
-			<div>{countryInput()}</div>
-			<div className={styles.text}>League</div>
-			<div>{leagueInput()}</div>
-			<div className={styles.text}>Team</div>
-			<div>{teamInput()}</div>
-			<div className={styles.text}>Position</div>
-			<div>{positionInput()}</div>
-			<div className={styles.input_stat_container}>{statInput()}</div>
-			<button type="submit" className={styles.submit_button}>submit</button>
-		</div>
+		<form className={styles.main} onSubmit={handleSubmit}>
+			<div>
+				<div className={styles.title}>CREATE YOUR OWN PLAYER</div>
+				<div>{playerNameInput()}</div>
+				<div className={styles.text}>Country</div>
+				<div>{countryInput()}</div>
+				<div className={styles.text}>League</div>
+				<div>{leagueInput()}</div>
+				<div className={styles.text}>Team</div>
+				<div>{teamInput()}</div>
+				<div className={styles.text}>Position</div>
+				<div>{positionInput()}</div>
+				<div className={styles.text}>Age</div>
+				<div>{ageInput()}</div>
+				<div className={styles.text}>Gender</div>
+				<div>{genderInput()}</div>
+			</div>
+			<div>
+				<div className={styles.text}>ATT Work Rate</div>
+				<div>{attworkrateInput()}</div>
+				<div className={styles.text}>DEF Work Rate</div>
+				<div>{defworkrateInput()}</div>
+				<div className={styles.text}>Skill moves</div>
+				<div>{skillmovesInput()}</div>
+				<div className={styles.text}>Weak foot</div>
+				<div>{weakfootInput()}</div>
+				<div className={styles.text}>Preferred foot</div>
+				<div>{preferredfootInput()}</div>
+				<div className={styles.text}>Gk</div>
+				<div>{gkInput()}</div>
+				<div className={styles.text}>Overall</div>
+				<div>{overallInput()}</div>
+			</div>
+			<div>
+				<div className={styles.input_stat_container}>{statInput()}</div>
+				<button type="submit" className={styles.submit_button}>submit</button>
+			</div>
+		</form>
 	)
 }
 

@@ -266,6 +266,20 @@ function SearchContainer(props) {
 		})
 	}
 
+	//alert for input range 
+	const inputAlert = (e) => {
+		if (e.target.value >= 0) {
+			if (e.target.value.length > 2) {
+				if (e.target.value >= 100) {
+					alert("Maximum stat is 99");
+				}
+				e.target.value = 99;
+			}
+		} else {
+			e.target.value = 0;
+			alert("Minimum stat is 0");}
+	}
+
 	//handle form values
 	const handleChange = (e) => {
 		const {value, name: inputName} = e.target
@@ -344,6 +358,7 @@ function SearchContainer(props) {
 				type='number'
 				name= {mainStat[i][1]}
 				value= {mainStat[i][0]}
+				onInput={inputAlert}
 				onChange={handleChange}
 				/>)
 		}
