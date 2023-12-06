@@ -10,105 +10,14 @@ function ResultContainer(props) {
 
 	//initial values when create
 	const initialValue = {
-		Acceleration: null,
-		Age: null,
-		Aggression: null,
-		Agility: null,
-		Attworkrate: null,
-		Balance: null,
-		Ball: null,
-		Composure: null,
-		Crossing: 99,
-		Curve: 99,
-		Def: 99,
-		Defending: 99,
-		Defworkrate: "High",
-		Dribbling: 99,
-		Finishing: 99,
-		Free: 99,
-		GK: 99,
-		Gender: "M",
-		Heading: 99,
-		Interceptions: 99,
-		Jumping: 99,
-		Long: 99,
-		Overall: 99,
-		Pace: 99,
-		Passing: 99,
-		Penalties: 99,
-		Physicality: 99,
-		position: "GK",
-		Positioning: 99,
-		Preferredfoot: "Right",
-		Reactions: 99,
-		Shooting: 99,
-		Shot: 99,
-		Skillmoves: 1,
-		Sliding: 99,
-		Sprint: 99,
-		Stamina: 99,
-		Standing: 99,
-		Strength: 99,
-		Vision: 99,
-		Volleys: 99,
-		Weakfoot: 1,
-		countryId: 0,
-		playerId: -1,
 		teamId: 0,
-		playerName: "",
 		leagueId: -1}
 
 	//set value states
 	const [inputValues, setInputValues] = useState(initialValue);
 	const {
-		Acceleration,
-		Age,
-		Aggression,
-		Agility,
-		Attworkrate,
-		Balance,
-		Ball,
-		Composure,
-		Crossing,
-		Curve,
-		Def,
-		Defending,
-		Defworkrate,
-		Dribbling,
-		Finishing,
-		Free,
-		GK,
-		Gender,
-		Heading,
-		Interceptions,
-		Jumping,
-		Long,
-		Overall,
-		Pace,
-		Passing,
-		Penalties,
-		Physicality,
-		position,
-		Positioning,
-		Preferredfoot,
-		Reactions,
-		Shooting,
-		Shot,
-		Skillmoves,
-		Sliding,
-		Sprint,
-		Stamina,
-		Standing,
-		Strength,
-		Vision,
-		Volleys,
-		Weakfoot,
-		countryId,
-		playerId,
 		teamId,
-		playerName,
 		leagueId,
-		countryName,
 	} = inputValues
 
 	//get country, league from mysql on first render
@@ -131,6 +40,17 @@ function ResultContainer(props) {
 		fetchTeam()
 	}, [leagueId])
 
+	//update team stats
+	const fetchTeamUpdate = async(id) => {
+		await axios.get("http://localhost:5000/updateTeam",
+		{params: {
+		 _teamId: id
+	 }
+	 }).then((result) => {
+		 console.log(result)
+	 })
+	}
+
 	//handle form values
 	const handleChange = (e) => {
 		const {value, name: inputName} = e.target
@@ -139,34 +59,38 @@ function ResultContainer(props) {
 	
 	const handleUpdate = (e) => {
 		const i = e.target.value
-		console.log(i)
-		if (window.confirm(`Are you sure transfer ${pData[i].playerName}?`)) updatePlayer(pData[i].playerId, teamId);
+		const prevTeam = pData[i].teamId
+		if (window.confirm(`Are you sure transfer ${pData[i].playerName}?`)) updatePlayer(pData[i].playerId, teamId, prevTeam);
 		return 
 	}
 
-	const updatePlayer = async(x, y) => {
+	const updatePlayer = async(x, y, z) => {
 		await axios.get("http://localhost:5000/update",
 			{params: {
 				_pId: x,
 				_teamId: y
 			}}
 			).then((result) => {
+				fetchTeamUpdate(y)
+				fetchTeamUpdate(Number(z))
 				alert("Player transferred") 
 			})
 		}
 
 	//display confirm when click delete button
 	const handleDelelte = (e) => {
-		const pId = e.target.value;
-		if (window.confirm(`Are you sure delete Player ${e.target.name}?`)) deletePlayer(pId);
+		const pId = pData[e.target.value].playerId;
+		const pTeam = pData[e.target.value].teamId
+		if (window.confirm(`Are you sure delete Player ${e.target.name}?`)) deletePlayer(pId, pTeam);
 	}
 	//delete selected player
-	const deletePlayer = async(props) => {
+	const deletePlayer = async(pid, pteam) => {
 		await axios.get("http://localhost:5000/delete",
 			{params: {
-				_pId: props
+				_pId: pid
 			}}
 			).then((result) => {
+				fetchTeamUpdate(pteam)
 				alert("Player deleted") 
 			})
 		}
@@ -332,7 +256,7 @@ function ResultContainer(props) {
 						</div>
 						<div>
 							<button value={i} onClick={onUpdate}>DETAIL / UPDATE</button>&ensp;
-							<button value={pData[i].playerId} name={pData[i].playerName} onClick={handleDelelte}>DELETE</button>
+							<button value={i} name={pData[i].playerName} onClick={handleDelelte}>DELETE</button>
 						</div>
 						<div className={styles.updateContainer}>
 							{viewUpdate(i)}

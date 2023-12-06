@@ -20,7 +20,7 @@ function TopHeaderBar() {
 	}
 	return (
 		<div className={styles.main}>
-			<div className={styles.title}>FC DB</div>
+			<div className={styles.title}>FC24 DB</div>
 			<div onClick={navigateToSearch} className={styles.search}>SEARCH PLAYER</div>
 			<div onClick={navigateToCreate} className={styles.create}>CREATE CUSTOM PLAYER</div>
 			<div onClick={navigateToTeam} className={styles.create}>Team INFO</div>

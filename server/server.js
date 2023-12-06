@@ -18,7 +18,6 @@ app.get('/country', (req, res) => {
 
 app.get('/league', (req, res) => {
 	const q = "select * from league;"
-	console.log(q)
 	db.query(q, (err, result, fields) => {
 		if (!err) res.send(result);
 		else res.send(err);
@@ -32,7 +31,6 @@ app.get('/team', (req, res) => {
 		ql = `where leagueId = ${league};`
 	} 
 	const q = `select * from team ${ql}`
-	console.log(q)
 	db.query(q, (err, result, fields) => {
 		if (!err) res.send(result);
 		else res.send(err);
@@ -109,7 +107,6 @@ app.get('/player', (req, res) => {
 
 	ORDER BY p.Overall DESC LIMIT 50;`
 
-	console.log(q)
 	db.query(q, (err, result, fields) => {
 		if (!err) res.send(result);
 		else res.send(err);
@@ -265,7 +262,6 @@ app.get('/create', (req, res) => {
 			${GK},
 			${countryId},
 			${teamId});`
-	console.log(q)
 
 	db.query(q, (err, result, fields) => {
 		if (!err) res.send(result);
@@ -277,7 +273,8 @@ app.get('/create', (req, res) => {
 app.get('/update', (req, res) => {
 	const pId = req.query._pId
 	const teamId = req.query._teamId
-	const q = `update player set teamId = ${teamId} where playerId = ${pId}`
+	console.log(teamId)
+	const q = `update player set teamId = ${teamId} where playerId = ${pId};`
 	db.query(q, (err, result, fields) => {
 		if (!err) res.send(result);
 		else res.send(err);
@@ -289,6 +286,16 @@ app.get('/teaminfo', (req, res) => {
 	const leagueId = Number(req.query._leagueId)
 
 	const q = `SELECT t.*, COUNT(p.playerId) AS playerNum FROM team t join player p on t.teamId = p.teamId where t.leagueId = ${leagueId} group by t.teamId;`
+	db.query(q, (err, result, fields) => {
+		if (!err) res.send(result);
+		else res.send(err);
+	})
+})
+
+app.get('/updateTeam', (req, res) => {
+	const teamId = Number(req.query._teamId)
+
+	const q = `call update_player(${teamId})`
 	console.log(q)
 	db.query(q, (err, result, fields) => {
 		if (!err) res.send(result);

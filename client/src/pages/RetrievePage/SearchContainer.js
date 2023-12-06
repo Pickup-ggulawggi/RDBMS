@@ -207,6 +207,15 @@ function SearchContainer(props) {
 	
 	//connect to server to retrieve data
 	const fetchSubmit = async() => {
+		if (minOverall === "" || maxOverall === "" 
+		|| minPace === "" || maxPace === "" 
+		|| minShooting === "" || maxShooting === "" 
+		|| minPassing === "" || maxPassing === "" 
+		|| minDribbling === "" || maxDribbling === "" 
+		|| minDefending === "" || maxDefending === "" 
+		|| minPhysicality === "" || maxPhysicality === "") {
+			return alert("please input all values")
+		}
 		await axios.get("http://localhost:5000/player",
 		 {params: {
 			_name: playerName,
@@ -234,6 +243,7 @@ function SearchContainer(props) {
 			props.setData(result)
 		})
 	}
+
 	const [countrys, setCountrys] = useState([]);
 	//get country info from server to show combobox
 	const fetchCountry = async() => {

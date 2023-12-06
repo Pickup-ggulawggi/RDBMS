@@ -37,9 +37,12 @@
 }
 .updateText {
 	margin: 5px;
+	font-size: small;
 }
 .submit_button{
-	width: 50%;
+	margin: 5px;
+	width: 100px;
+	height: 20px;
 	display: flex;
 	justify-content: center;
 	margin: 15px 0px 15px 15px;

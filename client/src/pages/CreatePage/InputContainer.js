@@ -203,9 +203,21 @@ function InputContainer() {
 			_playerName: playerName,
 		}
 		}).then((result) => {
+			fetchTeamUpdate(teamId)
 			console.log(result)
 			alert("Player added")
 		})
+	}
+
+	//update team stats
+	const fetchTeamUpdate = async() => {
+		await axios.get("http://localhost:5000/updateTeam",
+		{params: {
+		 _teamId: teamId
+	 }
+	 }).then((result) => {
+		 console.log(result)
+	 })
 	}
 
 	const [countrys, setCountrys] = useState([]);
@@ -243,6 +255,7 @@ function InputContainer() {
 
 	//handle form values
 	const handleChange = (e) => {
+		console.log(e.target.value)
 		const {value, name: inputName} = e.target
 		setInputValues({...inputValues, [inputName]: value})
 	}
@@ -251,8 +264,15 @@ function InputContainer() {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		if (playerName === "") {
-			alert("Please input Player Name")
-			return
+			return alert("Please input Player Name")
+		}
+		else if (Overall === "" || GK ==="" || Acceleration === "" || Sprint === "" 
+		|| Positioning === "" || Finishing === "" || Shot=== "" || Long === "" || Volleys === ""
+		|| Vision === "" || Crossing === "" || Free === "" || Curve === ""
+		|| Agility === "" || Balance === "" || Reactions === "" || Ball  === "" || Composure === ""
+		|| Interceptions === "" || Heading === "" || Def === "" || Standing === "" || Sliding === ""
+		|| Jumping === "" || Stamina === "" || Strength === "" || Aggression === "" ) {
+			return alert("Please input all stats")
 		}
 		if (window.confirm(`Are you sure create Player ${playerName}?`)) fetchSubmit();
 	}
